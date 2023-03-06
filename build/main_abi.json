@@ -1,0 +1,206 @@
+[
+    {
+        "members": [
+            {
+                "name": "id",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "name",
+                "offset": 1,
+                "type": "felt"
+            },
+            {
+                "name": "type",
+                "offset": 2,
+                "type": "felt"
+            },
+            {
+                "name": "likes",
+                "offset": 3,
+                "type": "felt"
+            },
+            {
+                "name": "owner",
+                "offset": 4,
+                "type": "felt"
+            }
+        ],
+        "name": "Pokemon",
+        "size": 5,
+        "type": "struct"
+    },
+    {
+        "inputs": [
+            {
+                "name": "name",
+                "type": "felt"
+            }
+        ],
+        "name": "like_pokemon",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "name",
+                "type": "felt"
+            },
+            {
+                "name": "type",
+                "type": "felt"
+            }
+        ],
+        "name": "create_pokemon",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "new_implementation",
+                "type": "felt"
+            }
+        ],
+        "name": "upgrade",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "proxy_admin",
+                "type": "felt"
+            },
+            {
+                "name": "token_name",
+                "type": "felt"
+            },
+            {
+                "name": "token_symbol",
+                "type": "felt"
+            },
+            {
+                "name": "token_decimals",
+                "type": "felt"
+            },
+            {
+                "name": "name1",
+                "type": "felt"
+            },
+            {
+                "name": "type1",
+                "type": "felt"
+            },
+            {
+                "name": "name2",
+                "type": "felt"
+            },
+            {
+                "name": "type2",
+                "type": "felt"
+            },
+            {
+                "name": "name3",
+                "type": "felt"
+            },
+            {
+                "name": "type3",
+                "type": "felt"
+            }
+        ],
+        "name": "initializer",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "show_all_pokemons",
+        "outputs": [
+            {
+                "name": "pokemons_len",
+                "type": "felt"
+            },
+            {
+                "name": "pokemons",
+                "type": "Pokemon*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "name",
+                "type": "felt"
+            }
+        ],
+        "name": "show_pokemon",
+        "outputs": [
+            {
+                "name": "pokemon",
+                "type": "Pokemon"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "user_id",
+                "type": "felt"
+            }
+        ],
+        "name": "show_user_pokemons",
+        "outputs": [
+            {
+                "name": "pokemons_len",
+                "type": "felt"
+            },
+            {
+                "name": "pokemons",
+                "type": "Pokemon*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "data": [
+            {
+                "name": "user",
+                "type": "felt"
+            },
+            {
+                "name": "pokemon",
+                "type": "Pokemon"
+            }
+        ],
+        "keys": [],
+        "name": "pokemon_created",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "user",
+                "type": "felt"
+            },
+            {
+                "name": "pokemon",
+                "type": "Pokemon"
+            },
+            {
+                "name": "likes",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "pokemon_liked",
+        "type": "event"
+    }
+]
