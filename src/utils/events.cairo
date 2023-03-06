@@ -1,5 +1,9 @@
 %lang starknet
 
+from src.utils.models import (
+    Pokemon,
+)
+
 @event
 func pokemon_created(
     user: felt, pokemon: Pokemon

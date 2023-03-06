@@ -14,41 +14,52 @@ from starkware.cairo.common.math import (
     assert_nn,
 )
 
-// from utils.helpers import ( 
-//     get_pokemon,
-//     get_all_pokemons,
-//     get_user_pokemons,
-//     add_pokemon,
-// )
+from src.utils.helpers import ( 
+    get_pokemon,
+    get_all_pokemons,
+    get_user_pokemons,
+    _create_pokemon,
+    pay,
+    reward_user,
+    ensure_user,
+)
+
+from src.utils.events import (
+    pokemon_created,
+    pokemon_liked,
+)
+
+from src.utils.models import (
+    Pokemon,
+)
+
+from src.utils.state import (
+    pokemons,
+    pokemon_last_id,
+    likes,
+)
 
 // from ERC20 import (
 
 // )
 
-// from openzeppelin.upgrades.library import Proxy
-// from openzeppelin.token.erc20.library import ERC20
+from openzeppelin.upgrades.library import Proxy
+from openzeppelin.token.erc20.library import ERC20
 
-struct Pokemon {
-    id: felt,
-    name: felt,
-    type: felt, 
-    likes: felt,
-    owner: felt,
-}
 
 ///////////////////////////////storage_vars
 
-@storage_var
-func pokemons(id: felt) -> (res: Pokemon) {
-}
+// @storage_var
+// func pokemons(id: felt) -> (res: Pokemon) {
+// }
 
-@storage_var
-func pokemon_last_id() -> (id: felt) {
-}
+// @storage_var
+// func pokemon_last_id() -> (id: felt) {
+// }
 
-@storage_var
-func likes(user: felt, pokemon_id: felt) -> (is_liked: felt) {
-}
+// @storage_var
+// func likes(user: felt, pokemon_id: felt) -> (is_liked: felt) {
+// }
 
 ///////////////////////////////external
 
@@ -80,8 +91,8 @@ func create_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_
 ) {
     alloc_locals;
     let (user) = ensure_user();
-    add_new_pokemon(name=name, type=type, user=user);
-    pay(user=user, 1);
+    _create_pokemon(name=name, type=type, user=user);
+    pay(user=user, credit_requirement=1);
     // let (last_id) = pokemon_last_id.read();
     // let (pokemon) = get_pokemon(name=name, id=last_id);
     // with_attr error_message("Pokemon of name {name} already exists.") {
@@ -102,8 +113,8 @@ func create_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_
 func upgrade{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     new_implementation: felt
 ) {
-    // Proxy.assert_only_admin();
-    // Proxy._set_implementation_hash(new_implementation);
+    Proxy.assert_only_admin();
+    Proxy._set_implementation_hash(new_implementation);
     return ();
 }
 
@@ -112,11 +123,11 @@ func initializer{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     proxy_admin: felt, token_name: felt, token_symbol: felt, token_decimals: felt, name1: felt, type1: felt, name2: felt, type2: felt, name3: felt, type3: felt
 ) {
     alloc_locals;
-    // ERC20.initializer(token_name, token_symbol, token_decimals);
-    // Proxy.initializer(proxy_admin);
-    add_new_pokemon(name=name1, type=type1, user=proxy_admin);
-    add_new_pokemon(name=name2, type=type2, user=proxy_admin);
-    add_new_pokemon(name=name3, type=type3, user=proxy_admin);
+    ERC20.initializer(token_name, token_symbol, token_decimals);
+    Proxy.initializer(proxy_admin);
+    _create_pokemon(name=name1, type=type1, user=proxy_admin);
+    _create_pokemon(name=name2, type=type2, user=proxy_admin);
+    _create_pokemon(name=name3, type=type3, user=proxy_admin);
     return ();
 }
 
@@ -152,76 +163,76 @@ func show_user_pokemons{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
 
 ///////////////////////////////event
 
-@event
-func pokemon_created(
-    user: felt, pokemon: Pokemon
-) {
-}
+// @event
+// func pokemon_created(
+//     user: felt, pokemon: Pokemon
+// ) {
+// }
 
-@event
-func pokemon_liked(
-    user: felt, pokemon: Pokemon, likes: felt
-) {
-}
+// @event
+// func pokemon_liked(
+//     user: felt, pokemon: Pokemon, likes: felt
+// ) {
+// }
 
 ///////////////////////////////private
 
-func get_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    name: felt, id: felt
-) -> (pokemon: Pokemon) {
-    let (pokemon) = pokemons.read(id);
-    if (id == 0) {
-        return (pokemon=pokemon);
-    }
-    if (pokemon.name == name) {
-        return (pokemon=pokemon);
-    } else {
-        return get_pokemon(name=name, id=id - 1);
-    }
-}
+// func get_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+//     name: felt, id: felt
+// ) -> (pokemon: Pokemon) {
+//     let (pokemon) = pokemons.read(id);
+//     if (id == 0) {
+//         return (pokemon=pokemon);
+//     }
+//     if (pokemon.name == name) {
+//         return (pokemon=pokemon);
+//     } else {
+//         return get_pokemon(name=name, id=id - 1);
+//     }
+// }
 
-func get_all_pokemons{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    arr_len: felt, arr: Pokemon*, index: felt
-) -> (pokemons_len: felt, pokemons: Pokemon*) {
-    if (index == 0) {
-        return (pokemons_len=arr_len, pokemons=arr);
-    }
-    let (pokemon) = pokemons.read(id=index);
-    assert arr[arr_len] = pokemon;
-    return get_all_pokemons(arr_len=arr_len + 1, arr=arr, index=index - 1);
-}
+// func get_all_pokemons{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+//     arr_len: felt, arr: Pokemon*, index: felt
+// ) -> (pokemons_len: felt, pokemons: Pokemon*) {
+//     if (index == 0) {
+//         return (pokemons_len=arr_len, pokemons=arr);
+//     }
+//     let (pokemon) = pokemons.read(id=index);
+//     assert arr[arr_len] = pokemon;
+//     return get_all_pokemons(arr_len=arr_len + 1, arr=arr, index=index - 1);
+// }
 
-func get_user_pokemons{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    arr_len: felt, arr: Pokemon*, index: felt, user_id: felt
-) -> (pokemons_len: felt, pokemons: Pokemon*) {
-    if (index == 0) {
-        return (pokemons_len=arr_len, pokemons=arr);
-    }
-    let (pokemon) = pokemons.read(id=index);
-    if (pokemon.owner == user_id) {
-        assert arr[arr_len] = pokemon;
-        return get_user_pokemons(arr_len=arr_len + 1, arr=arr, index=index - 1, user_id=user_id);
-    } else {
-        return get_user_pokemons(arr_len=arr_len, arr=arr, index=index - 1, user_id=user_id);
-    }
-}
+// func get_user_pokemons{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+//     arr_len: felt, arr: Pokemon*, index: felt, user_id: felt
+// ) -> (pokemons_len: felt, pokemons: Pokemon*) {
+//     if (index == 0) {
+//         return (pokemons_len=arr_len, pokemons=arr);
+//     }
+//     let (pokemon) = pokemons.read(id=index);
+//     if (pokemon.owner == user_id) {
+//         assert arr[arr_len] = pokemon;
+//         return get_user_pokemons(arr_len=arr_len + 1, arr=arr, index=index - 1, user_id=user_id);
+//     } else {
+//         return get_user_pokemons(arr_len=arr_len, arr=arr, index=index - 1, user_id=user_id);
+//     }
+// }
 
-func add_new_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    name: felt, type: felt, user: felt
-) -> () {
-    alloc_locals;
-    let (last_id) = pokemon_last_id.read();
-    let (pokemon) = get_pokemon(name=name, id=last_id);
-    with_attr error_message("Pokemon of name {name} already exists.") {
-        assert_not_equal(name, pokemon.name);
-    }
-    //assuming that types are: fire - 1, water - 2, grass - 3
-    with_attr error_message("You cannot create a pokemon of type {type}, allowed types: fire, water, grass.") {
-        assert (type - 1) * (type - 2) * (type - 3) = 0;
-    } 
-    tempvar new_pokemon = Pokemon(id=last_id + 1, name=name, type=type, likes=0, owner=user);
-    pokemon_last_id.write(last_id + 1);
-    pokemons.write(last_id + 1, new_pokemon);
-    pokemon_created.emit(user=user, pokemon=new_pokemon);
-    return ();
-}
+// func add_new_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+//     name: felt, type: felt, user: felt
+// ) -> () {
+//     alloc_locals;
+//     let (last_id) = pokemon_last_id.read();
+//     let (pokemon) = get_pokemon(name=name, id=last_id);
+//     with_attr error_message("Pokemon of name {name} already exists.") {
+//         assert_not_equal(name, pokemon.name);
+//     }
+//     //assuming that types are: fire - 1, water - 2, grass - 3
+//     with_attr error_message("You cannot create a pokemon of type {type}, allowed types: fire, water, grass.") {
+//         assert (type - 1) * (type - 2) * (type - 3) = 0;
+//     } 
+//     tempvar new_pokemon = Pokemon(id=last_id + 1, name=name, type=type, likes=0, owner=user);
+//     pokemon_last_id.write(last_id + 1);
+//     pokemons.write(last_id + 1, new_pokemon);
+//     pokemon_created.emit(user=user, pokemon=new_pokemon);
+//     return ();
+// }

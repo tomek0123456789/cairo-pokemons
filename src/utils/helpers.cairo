@@ -12,8 +12,36 @@ from starkware.cairo.common.math import (
 from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.uint256 import Uint256
 
+from src.utils.models import (
+    Pokemon,
+)
+
+from src.utils.state import (
+    pokemons,
+    pokemon_last_id,
+    likes,
+)
+
+from src.utils.events import (
+    pokemon_created,
+    pokemon_liked,
+)
 from openzeppelin.token.erc20.library import ERC20
 
+from openzeppelin.token.erc20.presets.ERC20 import (
+    constructor,
+    name,
+    symbol,
+    totalSupply,
+    decimals,
+    balanceOf,
+    allowance,
+    transfer,
+    transferFrom,
+    approve,
+    increaseAllowance,
+    decreaseAllowance
+)
 func get_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     name: felt, id: felt
 ) -> (pokemon: Pokemon) {
@@ -54,9 +82,9 @@ func get_user_pokemons{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
     }
 }
 
-func add_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func _create_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     name: felt, type: felt, user: felt
-) -> (pokemon: Pokemon) {
+) -> () {
     alloc_locals;
     let (last_id) = pokemon_last_id.read();
     let (pokemon) = get_pokemon(name=name, id=last_id);
@@ -65,7 +93,7 @@ func add_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }
     //assuming that types are: fire - 1, water - 2, grass - 3
     with_attr error_message("You cannot create a pokemon of type {type}, allowed types: fire, water, grass.") {
-        assert (type - 1) * (type - 2) * (type - 3) == 0
+        assert (type - 1) * (type - 2) * (type - 3) = 0;
     } 
     tempvar new_pokemon = Pokemon(id=last_id + 1, name=name, type=type, likes=0, owner=user);
     pokemon_last_id.write(last_id + 1);

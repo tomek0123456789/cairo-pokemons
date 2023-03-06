@@ -32,6 +32,121 @@
         "type": "struct"
     },
     {
+        "members": [
+            {
+                "name": "low",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "high",
+                "offset": 1,
+                "type": "felt"
+            }
+        ],
+        "name": "Uint256",
+        "size": 2,
+        "type": "struct"
+    },
+    {
+        "data": [
+            {
+                "name": "user",
+                "type": "felt"
+            },
+            {
+                "name": "pokemon",
+                "type": "Pokemon"
+            }
+        ],
+        "keys": [],
+        "name": "pokemon_created",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "user",
+                "type": "felt"
+            },
+            {
+                "name": "pokemon",
+                "type": "Pokemon"
+            },
+            {
+                "name": "likes",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "pokemon_liked",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "from_",
+                "type": "felt"
+            },
+            {
+                "name": "to",
+                "type": "felt"
+            },
+            {
+                "name": "value",
+                "type": "Uint256"
+            }
+        ],
+        "keys": [],
+        "name": "Transfer",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "owner",
+                "type": "felt"
+            },
+            {
+                "name": "spender",
+                "type": "felt"
+            },
+            {
+                "name": "value",
+                "type": "Uint256"
+            }
+        ],
+        "keys": [],
+        "name": "Approval",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "implementation",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "Upgraded",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "previousAdmin",
+                "type": "felt"
+            },
+            {
+                "name": "newAdmin",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "AdminChanged",
+        "type": "event"
+    },
+    {
         "inputs": [
             {
                 "name": "name",
@@ -168,39 +283,5 @@
         ],
         "stateMutability": "view",
         "type": "function"
-    },
-    {
-        "data": [
-            {
-                "name": "user",
-                "type": "felt"
-            },
-            {
-                "name": "pokemon",
-                "type": "Pokemon"
-            }
-        ],
-        "keys": [],
-        "name": "pokemon_created",
-        "type": "event"
-    },
-    {
-        "data": [
-            {
-                "name": "user",
-                "type": "felt"
-            },
-            {
-                "name": "pokemon",
-                "type": "Pokemon"
-            },
-            {
-                "name": "likes",
-                "type": "felt"
-            }
-        ],
-        "keys": [],
-        "name": "pokemon_liked",
-        "type": "event"
     }
 ]

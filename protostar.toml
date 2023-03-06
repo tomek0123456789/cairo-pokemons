@@ -4,4 +4,7 @@ lib-path = "lib"
 
 [contracts]
 main = ["src/main.cairo"]
-# proxy = ["src/proxy.cairo"]
+proxy = ["src/proxy.cairo"]
+
+[profile.devnet.protostar.deploy]
+gateway-url="http://127.0.0.1:5050/"
