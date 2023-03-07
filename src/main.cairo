@@ -117,7 +117,7 @@ func show_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_pt
     name: felt
 ) -> (pokemon: Pokemon) {
     let (last_id) = pokemon_last_id.read();
-    let (pokemon) = pokemons.read(last_id);
+    let (pokemon) = get_pokemon(name=name, id=last_id);
     with_attr error_message("Pokemon named {name} does not exist.") {
         assert_not_zero(pokemon.id);
     }
