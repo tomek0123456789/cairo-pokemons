@@ -116,6 +116,9 @@ func show_all_pokemons{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
 func show_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     name: felt
 ) -> (pokemon: Pokemon) {
+    with_attr error_message("Invalid pokemon name.") {
+        assert_not_zero(name);
+    }
     let (last_id) = pokemon_last_id.read();
     let (pokemon) = get_pokemon(name=name, id=last_id);
     with_attr error_message("Pokemon named {name} does not exist.") {
