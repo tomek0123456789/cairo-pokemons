@@ -128,6 +128,9 @@ func show_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_pt
 func show_user_pokemons{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     user_id: felt
 ) -> (pokemons_len: felt, pokemons: Pokemon*) {
+    with_attr error_message("Invalid user") {
+        assert_not_zero(user_id);
+    }
     let (last_id) = pokemon_last_id.read();
     let (empty_pokemon_arr: Pokemon*) = alloc();
     let (pokemons_len, pokemons) = get_user_pokemons(arr_len=0, arr=empty_pokemon_arr, index=last_id, user_id=user_id);
