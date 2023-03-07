@@ -12,6 +12,6 @@ func pokemon_created(
 
 @event
 func pokemon_liked(
-    user: felt, pokemon: Pokemon, likes: felt
+    user: felt, pokemon: Pokemon, updated_likes: felt
 ) {
 }

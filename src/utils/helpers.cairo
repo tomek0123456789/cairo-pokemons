@@ -29,7 +29,6 @@ from src.utils.events import (
 from openzeppelin.token.erc20.library import ERC20
 
 from openzeppelin.token.erc20.presets.ERC20 import (
-    constructor,
     name,
     symbol,
     totalSupply,
