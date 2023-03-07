@@ -61,7 +61,7 @@ func like_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_pt
         assert_not_equal(is_liked, 1);
     }
     likes.write(user=user, pokemon_id=pokemon.id, value=1);
-    pokemons.write(id=pokemon.id, value=Pokemon(id=pokemon.id, name=pokemon.id, type=pokemon.type, likes=pokemon.likes + 1, owner=pokemon.owner));
+    pokemons.write(id=pokemon.id, value=Pokemon(id=pokemon.id, name=pokemon.name, type=pokemon.type, likes=pokemon.likes + 1, owner=pokemon.owner));
     pokemon_liked.emit(user=user, pokemon=pokemon, updated_likes=pokemon.likes + 1);
     reward_user(user=user);
     return ();
