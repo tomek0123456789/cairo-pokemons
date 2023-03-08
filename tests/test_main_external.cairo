@@ -45,7 +45,7 @@ func test_create_valid_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, r
     pokemon_type: felt
 ) {
     alloc_locals;
-    let pokemon_name = 1234;
+    let pokemon_name = 'asdf';
     %{ stop_prank_callable = start_prank(ids.USER) %}
     let (user_id) = get_caller_address();
     let (balance_before) = balanceOf(user_id);
@@ -89,7 +89,7 @@ func test_add_pokemon_invalid_type{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
     %{ stop_prank_callable = start_prank(ids.USER) %}
     let (user_id) = get_caller_address();
     
-    %{ expect_revert("TRANSACTION_FAILED") %}
+    %{ expect_revert(error_message = "You cannot create a pokemon of type {type}, allowed types: fire, water, grass".format(type = ids.pokemon_type)) %}
     create_pokemon(pokemon_name, pokemon_type);
     
     %{ stop_prank_callable() %}
@@ -110,7 +110,7 @@ func test_add_pokemon_duplicate_name{syscall_ptr: felt*, pedersen_ptr: HashBuilt
     %{ stop_prank_callable = start_prank(ids.USER) %}
     create_pokemon(pokemon_name, pokemon_type);
 
-    %{ expect_revert("TRANSACTION_FAILED") %}
+    %{ expect_revert(error_message = "Pokemon named {name} already exists".format(name = ids.pokemon_name)) %}
     create_pokemon(pokemon_name, pokemon_type);
 
     %{ stop_prank_callable() %}
@@ -122,7 +122,7 @@ func test_add_pokemon_duplicate_name{syscall_ptr: felt*, pedersen_ptr: HashBuilt
 func test_add_pokemon_no_tokens{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     alloc_locals;
     %{ stop_prank_callable = start_prank(ids.USER) %}
-    %{ expect_revert("TRANSACTION_FAILED") %}
+    %{ expect_revert(error_message = "ERC20: burn amount exceeds balance") %}
     create_pokemon(111, 1);
 
     %{ stop_prank_callable() %}
@@ -197,7 +197,7 @@ func test_like_pokemon_twice{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ran
     let (pokemon) = pokemons.read(pokemon_id);
     like_pokemon(pokemon_name);
     
-    %{ expect_revert("TRANSACTION_FAILED") %}
+    %{ expect_revert(error_message = "You have already liked that pokemon") %}
     like_pokemon(pokemon_name);
 
     %{ stop_prank_callable() %}

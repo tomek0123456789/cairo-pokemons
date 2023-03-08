@@ -53,11 +53,11 @@ func like_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_pt
     let (user) = ensure_user();
     let (last_id) = pokemon_last_id.read();
     let (pokemon) = get_pokemon(name=name, id=last_id);
-    with_attr error_message("Pokemon named {name} does not exist.") {
+    with_attr error_message("Pokemon named {name} does not exist") {
         assert_not_zero(pokemon.id);
     }
     let (is_liked) = likes.read(user=user, pokemon_id=pokemon.id);
-    with_attr error_message("You have already liked that pokemon.") {
+    with_attr error_message("You have already liked that pokemon") {
         assert_not_equal(is_liked, 1);
     }
     likes.write(user=user, pokemon_id=pokemon.id, value=1);
@@ -116,12 +116,12 @@ func show_all_pokemons{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
 func show_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     name: felt
 ) -> (pokemon: Pokemon) {
-    with_attr error_message("Invalid pokemon name.") {
+    with_attr error_message("Invalid pokemon name") {
         assert_not_zero(name);
     }
     let (last_id) = pokemon_last_id.read();
     let (pokemon) = get_pokemon(name=name, id=last_id);
-    with_attr error_message("Pokemon named {name} does not exist.") {
+    with_attr error_message("Pokemon named {name} does not exist") {
         assert_not_zero(pokemon.id);
     }
     return (pokemon=pokemon);

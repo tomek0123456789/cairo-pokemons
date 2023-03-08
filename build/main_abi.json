@@ -74,7 +74,7 @@
                 "type": "Pokemon"
             },
             {
-                "name": "likes",
+                "name": "updated_likes",
                 "type": "felt"
             }
         ],

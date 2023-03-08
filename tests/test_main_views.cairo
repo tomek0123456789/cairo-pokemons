@@ -54,17 +54,34 @@ func test_show_pokemon_valid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ran
 
 @external
 func setup_show_pokemon_invalid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
-    %{ given(invalid_id = strategy.integers(1, 1)) %}
+    %{ given(invalid_name = strategy.integers(0, 0)) %}
     return ();
 }
 
 @external
 func test_show_pokemon_invalid{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    invalid_id: felt
+    invalid_name: felt
 ) {
-    %{ expect_revert("TRANSACTION_FAILED") %}
-    let (pokemon) = show_pokemon(invalid_id);
+    %{ expect_revert(error_message = "Invalid pokemon name") %}
+    let (pokemon) = show_pokemon(invalid_name);
 
+    return ();
+}
+
+@external
+func setup_show_pokemon_nonexisting{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
+    %{ 
+        given(invalid_name = strategy.integers(1, 3)) 
+    %}
+    return ();
+}
+
+@external
+func test_show_pokemon_nonexisting{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    invalid_name: felt
+) {
+    %{ expect_revert(error_message = "Pokemon named {name} does not exist".format(name = ids.invalid_name)) %}
+    let (pokemon) = show_pokemon(invalid_name);
     return ();
 }
 
@@ -188,9 +205,9 @@ func setup_show_user_pokemons{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ra
     // let third_one = pokemons.read(id=4);
     // let third_two = pokemons.read(id=5);
     // let third_three = pokemons.read(id=6);
-    // tempvar first: Pokemon* = cast(new(first_one), Pokemon*);
-    // tempvar second: Pokemon* = cast(new(second_one, second_two), Pokemon*);
-    // tempvar third: Pokemon* = cast(new(third_one, third_two, third_three), Pokemon*);
+    // tempvar first: Pokemon* = cast((first_one), Pokemon*);
+    // tempvar second: Pokemon* = cast((second_one, second_two), Pokemon*);
+    // tempvar third: Pokemon* = cast((third_one, third_two, third_three), Pokemon*);
     %{
         given(first_len = strategy.integers(1, 1), second_len = strategy.integers(2, 2), third_len = strategy.integers(0, 0),
             first_user_id = strategy.integers(ids.USER, ids.USER), second_user_id = strategy.integers(ids.SECOND_USER, ids.SECOND_USER), third_user_id = strategy.integers(ids.THIRD_USER, ids.THIRD_USER))
@@ -220,7 +237,7 @@ func test_show_user_pokemons{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ran
 @external
 func test_show_user_pokemons_invalid_user{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     const INVALID_ID = 0;
-    %{ expect_revert("TRANSACTION_FAILED") %}
+    %{ expect_revert(error_message = "Invalid user") %}
     let (pokemons_len, pokemons) = show_user_pokemons(INVALID_ID);
     %{ stop_prank_callable() %}
 

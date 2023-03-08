@@ -81,17 +81,18 @@ func get_user_pokemons{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
     }
 }
 
+// TODO string length check
 func _create_pokemon{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     name: felt, type: felt, user: felt
 ) -> () {
     alloc_locals;
     let (last_id) = pokemon_last_id.read();
     let (pokemon) = get_pokemon(name=name, id=last_id);
-    with_attr error_message("Pokemon of name {name} already exists.") {
+    with_attr error_message("Pokemon named {name} already exists") {
         assert_not_equal(name, pokemon.name);
     }
     //assuming that types are: fire - 1, water - 2, grass - 3
-    with_attr error_message("You cannot create a pokemon of type {type}, allowed types: fire, water, grass.") {
+    with_attr error_message("You cannot create a pokemon of type {type}, allowed types: fire, water, grass") {
         assert (type - 1) * (type - 2) * (type - 3) = 0;
     } 
     tempvar new_pokemon = Pokemon(id=last_id + 1, name=name, type=type, likes=0, owner=user);
